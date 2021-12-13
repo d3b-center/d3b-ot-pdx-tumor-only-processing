@@ -15,24 +15,34 @@ arguments:
     shellQuote: false
     valueFrom: >-
       $(inputs.xenome_index.path) --strip-components 1
+  - position: 3
+    shellQuote: false
+    valueFrom: >-
       && xenome classify
-      -T $(inputs.cores)
-      -P $(inputs.idx_prefix)
       --host-name mouse
       --graft-name human
-      -i $(inputs.fastq_reads.path)
-      -M ${ return inputs.ram/2 }
-      --preserve-read-order
+      --pairs
+      -M ${ return Math.floor(inputs.ram * (4/5)) }
       --output-filename-prefix $(inputs.output_basename)
+  - position: 5
+    shellQuote: false
+    valueFrom: >-
       > $(inputs.output_basename).Xenome.Classification.Stats.txt
 
 inputs:
-  xenome_index: {type: File, doc: "Xenome index made form host and graft fasta"}
-  idx_prefix: {type: string, doc: "String prefix of index files when decompressed"}
-  fastq_reads: {type: File, doc: "Sequencing reads to classify"}
+  xenome_index: {type: File, inputBinding: {position: 2}, doc: "Xenome index made form host and graft fasta"}
+  cores: {type: "int?", inputBinding: {prefix: -T, position: 4}, doc: "Num cores to use", default: 16}
+  ram: {type: "int?", doc: "Mem to use in GB", default: 32}
+  idx_prefix: {type: string, inputBinding: {prefix: -P, position: 4}, doc: "String prefix of index files when decompressed"}
+  fastq_reads: 
+    type:
+      type: array
+      items: File
+      inputBinding:
+        prefix: -i
+    inputBinding:
+      position: 4
   output_basename: string
-  cores: {type: "int?", doc: "Num cores to use", default: 16}
-  ram: {type: "int?", doc: "Mem to use in GB", default: 64}
 
 outputs:
   output_fastqs:
