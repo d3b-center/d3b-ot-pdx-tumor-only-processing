@@ -1,0 +1,3 @@
+[submodule "kf-rnaseq-workflow"]
+	path = kf-rnaseq-workflow
+	url = https://github.com/kids-first/kf-rnaseq-workflow
