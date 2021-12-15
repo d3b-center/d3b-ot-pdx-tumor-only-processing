@@ -19,8 +19,6 @@ arguments:
     shellQuote: false
     valueFrom: >-
       && xenome classify
-      --host-name mouse
-      --graft-name human
       --pairs
       -M ${ return Math.floor(inputs.ram * (4/5)) }
       --output-filename-prefix $(inputs.output_basename)
@@ -30,9 +28,11 @@ arguments:
       > $(inputs.output_basename).Xenome.Classification.Stats.txt
 
 inputs:
-  xenome_index: {type: File, inputBinding: {position: 2}, doc: "Xenome index made form host and graft fasta"}
-  cores: {type: "int?", inputBinding: {prefix: -T, position: 4}, doc: "Num cores to use", default: 16}
-  ram: {type: "int?", doc: "Mem to use in GB", default: 32}
+  xenome_index: {type: File, doc: "Xenome index made form host and graft fasta"}
+  host_name: {type: "string?", inputBinding: {prefix: --host-name, position: 4}, doc: 'name to use describing model organism receiving graft', default: "mouse"}
+  graft_name: {type: "string?", inputBinding: {prefix: --graft-name, position: 4}, doc: 'name to use describing organism that grafted tissue came from', default: "human"}
+  cores: {type: "int?", inputBinding: {prefix: -T, position: 4}, doc: "Num cores to use", default: 8}
+  ram: {type: "int?", doc: "Mem to use in GB", default: 8}
   idx_prefix: {type: string, inputBinding: {prefix: -P, position: 4}, doc: "String prefix of index files when decompressed"}
   fastq_reads: 
     type:
@@ -45,10 +45,14 @@ inputs:
   output_basename: string
 
 outputs:
-  output_fastqs:
-    type: File
+  graft_fastqs:
+    type: 'File[]'
     outputBinding:
-      glob: '*.fastq'
+      glob: '*$(inputs.graft_name)*.fastq'
+  host_fastqs:
+    type: 'File[]'
+    outputBinding:
+      glob: '*$(inputs.host_name)*.fastq'
   output_stats:
     type: File
     outputBinding:
