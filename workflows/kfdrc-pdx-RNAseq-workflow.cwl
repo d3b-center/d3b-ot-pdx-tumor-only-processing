@@ -1,7 +1,7 @@
 cwlVersion: v1.0
 class: Workflow
 id: kfdrc-pdx-rnaseq-wf
-label: Kids First DRC RNAseq Workflow
+label: Kids First OT PDX RNAseq Workflow
 doc: |
   # Kids First RNA-Seq Workflow
 
