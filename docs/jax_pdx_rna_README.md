@@ -4,7 +4,7 @@ To process multiple samples, please consider running batch tasks with this workf
 
 Note: This workflow utilizes the tool `Xenome` to removed mouse-reads from the raw-read data. `Xenome` uses host and graft reference sequences to characterize the set of all possible k-mers according to whether they belong to: only the graft (and not the host), only the host (and not the graft), both references, neither reference, and marginal asignments. This workflow uses those reads classified as 'human-only'.
 
-###Essential Requirements
+### Essential Requirements
 
 The following metadata fields are essential and should be assigned to input FASTQ files:
 
@@ -14,7 +14,7 @@ The following metadata fields are essential and should be assigned to input FAST
 This workflow will process both uncompressed and compressed FASTQ files (FASTQ.GZ, FASTQ.BZ2) and has been designed for paired-end data. By default, the workflow assumes unstranded data (**Forward probability** input parameter set to 0.5). Please adjust the value of this parameter (0.0 or 1.0) based on the library prep of your data. 
 
 
-####The following output files will be generated:
+#### The following output files will be generated:
 
 	Gene level expression estimates
 	Isoform level expression estimates
@@ -27,7 +27,7 @@ This workflow will process both uncompressed and compressed FASTQ files (FASTQ.G
 	Picard CollectRNASeqMetrics report
 	Somalier extracted sites file for input to Somalier `relate` cohort QC tool (see notes below)
 
-###Reference Files and Workflow Details
+### Reference Files and Workflow Details
 
 Required reference input files:
 
@@ -44,28 +44,28 @@ http://hgdownload.cse.ucsc.edu/goldenPath/hg38/database/refFlat.txt.gz Default f
 This is a VCF of known polymorphic sites in VCF format. A good set is provided in the tools [releases](https://github.com/brentp/somalier/releases) but any set of common variants will work. Ensure that Hg38 is used.
  
 
-###Workflow Steps and Notable Parameters
+### Workflow Steps and Notable Parameters
 
-####Step 1: Optional input preprocessing
+#### Step 1: Optional input preprocessing
 
 If FASTQ.BZ2 files are provided as inputs, the files will be decompressed before further analysis (as Xenome will only accept FASTQ and FASTQ.GZ files). FASTQ.GZ and uncompressed FASTQ input files will be passed on to other tools in the workflow.
 
-####Step 2: FASTQC analysis
+#### Step 2: FASTQC analysis
 
 Quality of the input FASTQ files is checked with **FASTQC**. 
 
-####Step 3: Xenome classification of reads
+#### Step 3: Xenome classification of reads
 
 FASTQ pairs are split (**SBG Split Pair by Metadata**) based on the appropriate paired_end metadata field values and classified by **Xenome** as mouse or human. **QC Xenome Check** tool checks that a sufficient number of reads have been classified as human. By default, minimum number of human reads required is set to 1000000, however this parameter is exposed (Minimum number of human-specific reads) and can be adjusted by the user.
 *Note*: If the **Minimum number of human-specific reads** cutoff is not met, the tasks will fail. If your expect <1000000 human reads in your input data, or are testing the workflow with subsetted files, please adjust this parameter accordingly.
 
-####Step 4: RSEM expression estimation
+#### Step 4: RSEM expression estimation
 
 Expression is estimated using **RSEM Calculate Expression** tool (RSEM 1.2.31), with STAR as the aligner. Please ensure that the reference indices archive supplied to the tool has been prepared accordingly. **RSEM Plot Model** tool is used to generate RSEM plots.
 
 Please note that by default, the workflow is setup to process unstranded data (**Forward probability** input parameter set to 0.5). Please make sure to adjust the value of this parameter (0.0, 0.5 or 1.0) based on the library-prep used.
 
-####Step 5: Additional QC
+#### Step 5: Additional QC
 
 Additional QC reports are collected from **Picard CollectRnaSeqMetrics** tool and **Xenome**.
 
