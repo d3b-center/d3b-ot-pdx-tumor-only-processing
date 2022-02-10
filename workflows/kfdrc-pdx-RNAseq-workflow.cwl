@@ -224,6 +224,7 @@ outputs:
       \ abundance output from STAR genomic bam file"}
   annofuse_filtered_fusions_tsv: {type: 'File?', outputSource: annofuse/annofuse_filtered_fusions_tsv,
     doc: "Filtered fusions called by annoFuse."}
+  xenome_filter_stats: { type: File, outputSource: xenome_classify/output_stats}
 
 steps:
 
